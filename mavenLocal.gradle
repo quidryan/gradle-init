@@ -1,0 +1,22 @@
+println "Initing"
+allprojects { project ->
+    //project.ext.skipMavenLocal = true
+    buildscript {
+        if( !project.hasProperty('skipMavenLocal') ) {
+            repositories {
+                println "Adding buildscript mavenLocal()"
+                mavenLocal()
+            }
+            configurations.all {
+                resolutionStrategy.cacheChangingModulesFor 0, 'hours'
+            }
+        }
+    }
+
+    if( !project.hasProperty('skipMavenLocal') ) {
+        repositories {
+            println "Adding mavenLocal()"
+            mavenLocal()
+        }
+    }
+}
