@@ -1,0 +1,31 @@
+
+import org.gradle.api.internal.tasks.options.Option
+class ShowConfiguration extends DefaultTask {
+    @Option(option='configuration', description='Name of configuration')
+    String configurationName
+
+    @TaskAction
+    def printOut() {
+        def confName = configurationName ?: 'runtime'
+       project.configurations[confName].files.each {
+            println it
+        }
+    }
+}
+
+allprojects { project ->
+    project.afterEvaluate {
+        if (null == tasks.findByName('showBuildscript') ) {
+            logger.info "Adding showBuildscript task"
+            project.tasks.create('showBuildscript') {
+                doFirst {
+                    buildscript.configurations.classpath.each { println it }
+                }
+            }
+        }
+        if (null == tasks.findByName('showConfiguration') ) {
+            logger.info "Adding showConfiguration task"
+            project.tasks.create(name: 'showConfiguration', type: ShowConfiguration)
+        }
+    }
+}
